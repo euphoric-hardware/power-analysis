@@ -39,7 +39,49 @@
 
 ### Building a reference from VCS
 
-- ...
+#### First Checkpoint
+
+VCS is an event-driven simulator for Verilog (RTL and gate-level (GL)).
+We want to use VCS to perform fast, parallel gate-level simulations given a RTL simulation waveform.
+The first step is to get comfortable with the flow of running RTL simulation, running synthesis, and running a full gate-level simulation with VCS.
+
+You can use the instructional machines (`eda-[1-4].eecs.berkeley.edu`).
+You may need to add something to your `~/.bashrc` (VCS is located in: `/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/bin`).
+
+<!--
+```bash
+export SYNOPSYS_ROOT=/share/instsww/synopsys-new
+export VCS_HOME=/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9
+export VCS_PATH=$VCS_HOME/bin
+export PATH="$VCS_PATH:$PATH"
+export LM_LICENSE_FILE="5280@bisc.EECS.Berkeley.EDU:$LM_LICENSE_FILE"
+export SNPSLMD_LICENSE_FILE=27005@license-srv.eecs.berkeley.edu
+export LM_PROJECT=bwrc_users
+```
+-->
+
+Next, you can use Hammer to actually run RTL simulation, yosys for synthesis, and VCS for gate-level simulation.
+I would reference the [EECS151 ASIC labs](https://inst.eecs.berkeley.edu/~eecs151/fa24/static/asic/lab2/) to do this.
+**Start with the lab files themselves, and run through the lab**.
+You will notice some PDK files here: `/home/ff/eecs151/fa24`.
+Then, try to get the same flow working within [Hammer alone using the e2e directory](https://github.com/ucb-bar/hammer/tree/master/e2e).
+
+All we want to see for this first checkpoint is a waveform from RTL simulation, the synthesized gate-level Verilog, and a gate-level simulation which also produces a waveform.
+You can use any RTL you want, for instance, the RTL from the EECS151 labs.
+Once you can produce all the collateral above, we can move onto the next step.
+
+#### Injecting State
+
+We propose to speed up gate level simulation by parallelizing it aggressively using an RTL waveform.
+This idea isn't new at all (see GATSPI). In fact, it might even be implemented within Joules when it performs RTL stimulus propagation for its internal gate level netlist.
+But the problem is the opaqueness of what Joules is doing - we don't trust it at all.
+And there is very likely an opportunity to get larger speedups too.
+
+To get started, we need a way to wrap a gate level netlist with a test harness which can read circuit inputs from a file and blast them into the DUT.
+We also need a way to force the initial state of registers within the gate level netlist with the values from a given cycle of RTL simulation.
+For the former, we need to generate a Verilog testharness which can ingest some text file and drive DUT inputs.
+For the latter, we can use UCLI to force register states. This is implemented in Hammer's gate level simulation flow, so we can adopt the same methodology.
+
 
 ### Building the main event driven gate level simulation framework
 
