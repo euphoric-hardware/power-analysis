@@ -82,6 +82,26 @@ We also need a way to force the initial state of registers within the gate level
 For the former, we need to generate a Verilog testharness which can ingest some text file and drive DUT inputs.
 For the latter, we can use UCLI to force register states. This is implemented in Hammer's gate level simulation flow, so we can adopt the same methodology.
 
+#### Steps
+
+- Strober repo: https://github.com/ucb-bar/midas-release/tree/release/src/main/cc (there may be some useful stuff here, but unlikely)
+  - https://dl.acm.org/doi/pdf/10.1145/3007787.3001151 (Strober paper)
+- Be able to run Hammer with some pdk (asap7), run a simple Verilog example through RTL sim (you create the testharness), synthesis, gate-level simulation (using the same testharness)
+  - https://github.com/ucb-bar/hammer/tree/master/e2e
+  - `.v`, `_tb.v`, `.mapped.v`, `.vcd`, `.gl.vcd`, `mapping file` (???, how does Genus generate this?)
+  - Understand all of these
+- Hand write a test harness that can perform state injection into the mapped GL Verilog
+- 3 options to do state injection
+  - UCLI (VCS specific)
+    - Start with this
+  - VPI (Verilog simulator specific)
+  - Verilog force/release (works with any Verilog simulator)
+- Demonstrate
+  - Be able to verify register state mapping
+  - Use some VCD parsing library (do this in Rust), extract inputs and register states on a given clock cycle
+  - Inject that state
+  - Advance one cycle
+  - Check the outputs from GL simulation match the original RTL sim waveform
 
 ### Building the main event driven gate level simulation framework
 
